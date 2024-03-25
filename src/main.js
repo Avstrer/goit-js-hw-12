@@ -18,11 +18,12 @@ form.addEventListener('submit', submitImageFinder);
 addButton.addEventListener('click', addImageGallery);
 // other
 
-let page = 1;
+let page;
 
-function submitImageFinder(event) {
+async function submitImageFinder(event) {
   event.preventDefault();
 
+  page = 1;
   gallery.innerHTML = '';
   addButton.classList.add('visible-hidden');
   const value = event.target.elements.formInput.value.trim();
@@ -38,7 +39,7 @@ function submitImageFinder(event) {
     gallery.innerHTML = '';
   } else {
     // запрос
-    getImage(value, page)
+    await getImage(value, page)
       // обработка ответа
       .then(collection => {
         // валидация не пустой ли массив изображений ответа
@@ -53,18 +54,16 @@ function submitImageFinder(event) {
         } else {
           // создание галереи
           loader.classList.add('show');
-          setTimeout(() => {
-            addButton.classList.remove('visible-hidden');
-            loader.classList.remove('show');
-            renderGallery(collection.data.hits);
-          }, 0);
+          addButton.classList.remove('visible-hidden');
+          loader.classList.remove('show');
+          renderGallery(collection.data.hits);
         }
       })
       .catch(err => console.log(err));
   }
 }
 
-function addImageGallery(event) {
+async function addImageGallery(event) {
   event.preventDefault();
   //
   const value = form.elements.formInput.value.trim();
@@ -73,9 +72,9 @@ function addImageGallery(event) {
   loader.classList.add('show');
   //
 
-  setTimeout(() => {
-    loader.classList.remove('show');
-    getImage(value, newpage).then(collection => {
+  loader.classList.remove('show');
+  await getImage(value, newpage)
+    .then(collection => {
       if (newpage * 15 > collection.data.totalHits) {
         addButton.classList.add('visible-hidden');
         iziToast.show({
@@ -92,6 +91,6 @@ function addImageGallery(event) {
         top: cardHeight.height * 2 + 48,
         behavior: 'smooth',
       });
-    });
-  }, 0);
+    })
+    .catch(err => console.log(err));
 }

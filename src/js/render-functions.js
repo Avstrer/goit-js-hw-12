@@ -1,7 +1,7 @@
 export const gallery = document.querySelector('.gallery');
 import simpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
-export function renderGallery(arr) {
+export async function renderGallery(arr) {
   const markup = arr
     .map(photo => {
       return `
